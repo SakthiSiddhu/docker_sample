@@ -1,0 +1,31 @@
+pipeline {
+    agent any
+    tools{
+        maven 'maven3'
+    }
+    stages{
+        stage('Build Maven'){
+            steps{
+                checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/SakthiSiddhu/docker_sample']])
+                bat 'mvn clean install'
+            }
+        }
+        stage('Build docker image'){
+            steps{
+                script{
+                    bat 'docker build -t sakthisiddu1/springbootsimple .'
+                }
+            }
+        }
+        stage('Push image to Hub'){
+            steps{
+                script{
+
+                   bat 'docker login -u sakthisiddu1 -p Sakthisiddu@1'
+
+                   bat 'docker push sakthisiddu1/springbootsimple'
+                }
+            }
+        }
+    }
+}
